@@ -7,6 +7,8 @@ from docx import Document
 from docx.text.paragraph import Paragraph
 from bible_references import get_patterns
 import re
+import os
+import logging
 
 def process_paragraph(paragraph: Paragraph, patterns: List[Tuple[re.Pattern, str]]) -> bool:
     """Process a single paragraph to standardize Bible references."""
@@ -61,12 +63,11 @@ def process_document(doc_path: str, output_path: Optional[str] = None, create_ba
         'paragraphs_processed': 0,
         'paragraphs_changed': 0,
         'backup_path': None,
-        'output_path': doc_path,
+        'output_path': output_path or doc_path,
         'error': None
     }
 
-    # Check if file exists
-    import os
+    # Check if input file exists
     if not os.path.exists(doc_path):
         result['error'] = f"File not found: {doc_path}"
         return result
@@ -104,13 +105,34 @@ def process_document(doc_path: str, output_path: Optional[str] = None, create_ba
                             result['paragraphs_changed'] += 1
                             result['changes_made'] = True
 
+        # Ensure output directory exists
+        if output_path and output_path != doc_path:
+            output_dir = os.path.dirname(output_path)
+            if output_dir:
+                try:
+                    os.makedirs(output_dir, exist_ok=True)
+                    logging.debug(f"Ensured output directory exists: {output_dir}")
+                except OSError as e:
+                    result['error'] = f"Failed to create output directory '{output_dir}': {str(e)}"
+                    return result
+
         # Save document
-        if output_path:
-            result['output_path'] = output_path
-        document.save(result['output_path'])
-        result['success'] = True
+        try:
+            logging.debug(f"Attempting to save document to: {result['output_path']}")
+            document.save(result['output_path'])
+            result['success'] = True
+        except PermissionError as e:
+            result['error'] = f"Permission denied when saving file '{result['output_path']}': {str(e)}"
+            logging.error(result['error'])
+            return result
+        except OSError as e:
+            result['error'] = f"Error saving file '{result['output_path']}': {str(e)}"
+            logging.error(result['error'])
+            return result
 
     except Exception as e:
-        result['error'] = str(e)
+        result['error'] = f"Unexpected error processing document: {str(e)}"
+        logging.error(result['error'])
+        return result
 
     return result

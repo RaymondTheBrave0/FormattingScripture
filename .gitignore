@@ -1,3 +1,6 @@
 # Ignore all Directories That are used for testing
 Baptism
 Baptismout
+
+# Ignore pycashe
+__pycashe__
