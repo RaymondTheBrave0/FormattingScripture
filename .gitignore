@@ -2,5 +2,5 @@
 Baptism
 Baptismout
 
-# Ignore pycashe
-__pycashe__
+# Ignore pycache
+__pycache__
