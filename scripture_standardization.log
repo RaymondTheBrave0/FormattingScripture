@@ -24,3 +24,40 @@
 2025-04-20 08:52:07,759 - DEBUG - Standardized standalone chapter: 3 John 1 -> 3 John 1:1
 2025-04-20 08:52:07,759 - DEBUG - Ensured output directory exists: output
 2025-04-20 08:52:07,759 - DEBUG - Attempting to save document to: output\test_non_standard.docx
+2025-04-20 11:12:46,762 - INFO - Processing file: test_non_standard.docx
+2025-04-20 11:12:46,771 - DEBUG - Processing parenthesized references: Gal. 3:27*, Eph. 4:24*, Col. 3:10*
+2025-04-20 11:12:46,771 - WARNING - Could not parse parenthesized reference: Gal. 3:27*
+2025-04-20 11:12:46,771 - WARNING - Could not parse parenthesized reference: Eph. 4:24*
+2025-04-20 11:12:46,771 - WARNING - Could not parse parenthesized reference: Col. 3:10*
+2025-04-20 11:12:46,773 - DEBUG - Standardized reference: Matt 5 3-10 -> Matt 5:3-10
+2025-04-20 11:12:46,774 - DEBUG - Standardized standalone chapter: Psalm 23 -> Psalm 23:1
+2025-04-20 11:12:46,774 - DEBUG - Standardized reference: Acts 2:12 -> Acts 2:12
+2025-04-20 11:12:46,775 - DEBUG - Standardized reference: Genesis 1:1 -> Genesis 1:1
+2025-04-20 11:12:46,775 - DEBUG - Standardized reference: John chapter 3 verse 16 -> John 3:16
+2025-04-20 11:12:46,776 - DEBUG - Standardized reference: Luke chapter 2 verses 1-7 -> Luke 2:1-7
+2025-04-20 11:12:46,777 - DEBUG - Processing parenthesized references: mt 4:23, mk 1:14-15, lk 4:14-15
+2025-04-20 11:12:46,777 - DEBUG - Standardized reference: mt 4:23 -> Matthew 4:23
+2025-04-20 11:12:46,777 - DEBUG - Standardized reference: mk 1:14-15 -> Mark 1:14-15
+2025-04-20 11:12:46,777 - DEBUG - Standardized reference: lk 4:14-15 -> Luke 4:14-15
+2025-04-20 11:12:46,777 - DEBUG - Standardized reference: Mark 1:14-15 -> Mark 1:14-15
+2025-04-20 11:12:46,777 - DEBUG - Standardized reference: Luke 4:14-15 -> Luke 4:14-15
+2025-04-20 11:12:46,778 - DEBUG - Processing parenthesized references: 1 jn 4:7-8, 2 jn 5-6, 3 jn 11
+2025-04-20 11:12:46,778 - DEBUG - Standardized reference: 1 jn 4:7-8 -> 1 John 4:7-8
+2025-04-20 11:12:46,778 - WARNING - Could not parse parenthesized reference: 2 jn 5-6
+2025-04-20 11:12:46,778 - DEBUG - Standardized standalone chapter: 3 jn 11 -> 3 John 11:1
+2025-04-20 11:12:46,778 - DEBUG - Standardized reference: 1 John 4:7-8 -> 1 John 4:7-8
+2025-04-20 11:12:46,778 - DEBUG - Standardized reference: 3 John 11:1 -> 3 John 11:1
+2025-04-20 11:12:46,778 - DEBUG - Standardized standalone chapter: 3 John 1 -> 3 John 1:1
+2025-04-20 11:12:46,779 - DEBUG - Ensured output directory exists: output
+2025-04-20 11:12:46,779 - DEBUG - Attempting to save document to: output\test_non_standard.docx
+2025-04-20 11:29:22,707 - INFO - Processing file: test_non_standard.docx
+2025-04-20 11:29:22,718 - ERROR - Unexpected error processing document: name 'get_patterns' is not defined
+2025-04-20 11:29:22,718 - ERROR - Failed to process test_non_standard.docx: Unexpected error processing document: name 'get_patterns' is not defined
+2025-04-20 11:37:47,547 - INFO - Processing file: test_non_standard.docx
+2025-04-20 11:37:47,548 - ERROR - Unexpected error processing document: standardize_reference() missing 1 required positional argument: 'reference'
+2025-04-20 11:37:47,549 - ERROR - Failed to process test_non_standard.docx: Unexpected error processing document: standardize_reference() missing 1 required positional argument: 'reference'
+2025-04-20 11:38:38,476 - INFO - Processing file: test_non_standard.docx
+2025-04-20 11:38:38,477 - ERROR - Unexpected error processing document: name 'text' is not defined
+2025-04-20 11:38:38,477 - ERROR - Failed to process test_non_standard.docx: Unexpected error processing document: name 'text' is not defined
+2025-04-20 11:53:40,886 - INFO - Processing file: test_non_standard.docx
+2025-04-20 11:59:55,732 - INFO - Processing file: test_non_standard.docx

@@ -1,62 +1,25 @@
-"""
-document_processing.py - Module for processing Word documents to standardize Bible references.
-"""
-
-from typing import Dict, List, Tuple, Optional
+from typing import Optional, Dict
+from file_utils import create_backup
+from bible_references import process_text  # Import the function to process text
 from docx import Document
-from docx.text.paragraph import Paragraph
-from bible_references import get_patterns
-import re
 import os
-import logging
 
-def process_paragraph(paragraph: Paragraph, patterns: List[Tuple[re.Pattern, str]]) -> bool:
-    """Process a single paragraph to standardize Bible references."""
-    changed = False
-    runs = list(paragraph.runs)
-    
-    if not runs:
-        return False
+def process_paragraph(paragraph) -> bool:
+    """
+    Process a single paragraph to standardize Bible references.
+    Returns True if the paragraph was modified, False otherwise.
+    """
+    original_text = paragraph.text
+    standardized_text = process_text(original_text)
+    if original_text != standardized_text:
+        paragraph.text = standardized_text
+        return True
+    return False
 
-    for i, run in enumerate(runs):
-        if run.text:
-            new_text, run_changed = process_run(run.text, patterns)
-            if run_changed:
-                run.text = new_text
-                changed = True
-
-    return changed
-
-def process_run(text: str, patterns: List[Tuple[re.Pattern, str]]) -> Tuple[str, bool]:
-    """Process a single run's text to standardize Bible references."""
-    original_text = text
-    changed = False
-
-    for pattern, replacement_func in patterns:
-        text = pattern.sub(replacement_func, text)
-
-    # Clean up spaces after commas
-    text = re.sub(r'(\d+),\s+(\d+)', r'\1,\2', text)
-
-    # Handle multi-chapter references
-    from bible_references import BIBLE_BOOKS
-    text = re.sub(
-        r'((?:' + '|'.join(map(re.escape, BIBLE_BOOKS.values())) + r')\s+)(\d+)-(\d+)(?!\s*:)',
-        r'\1\2:1-\3:1',
-        text,
-        flags=re.IGNORECASE
-    )
-
-    # Clean up curly braces if they remain
-    text = re.sub(r'\{([^}]+)\}', r'\1', text)
-
-    changed = text != original_text
-    return text, changed
-
-def process_document(doc_path: str, output_path: Optional[str] = None, create_backup: bool = True) -> Dict:
-    """Process a Word document to standardize Bible references."""
-    from file_utils import create_backup
-
+def process_document(doc_path: str, output_path: Optional[str] = None, should_create_backup: bool = True) -> Dict:
+    """
+    Process a Word document to standardize Bible references.
+    """
     result = {
         'success': False,
         'changes_made': False,
@@ -72,8 +35,8 @@ def process_document(doc_path: str, output_path: Optional[str] = None, create_ba
         result['error'] = f"File not found: {doc_path}"
         return result
 
-    # Create backup
-    if create_backup:
+    # Create backup if requested
+    if should_create_backup:
         backup_success, backup_result = create_backup(doc_path)
         if backup_success:
             result['backup_path'] = backup_result
@@ -82,16 +45,13 @@ def process_document(doc_path: str, output_path: Optional[str] = None, create_ba
             return result
 
     try:
-        # Get patterns
-        patterns = get_patterns()
-
         # Open document
         document = Document(doc_path)
 
         # Process paragraphs
         for paragraph in document.paragraphs:
             result['paragraphs_processed'] += 1
-            if process_paragraph(paragraph, patterns):
+            if process_paragraph(paragraph):
                 result['paragraphs_changed'] += 1
                 result['changes_made'] = True
 
@@ -101,38 +61,18 @@ def process_document(doc_path: str, output_path: Optional[str] = None, create_ba
                 for cell in row.cells:
                     for paragraph in cell.paragraphs:
                         result['paragraphs_processed'] += 1
-                        if process_paragraph(paragraph, patterns):
+                        if process_paragraph(paragraph):
                             result['paragraphs_changed'] += 1
                             result['changes_made'] = True
 
-        # Ensure output directory exists
-        if output_path and output_path != doc_path:
-            output_dir = os.path.dirname(output_path)
-            if output_dir:
-                try:
-                    os.makedirs(output_dir, exist_ok=True)
-                    logging.debug(f"Ensured output directory exists: {output_dir}")
-                except OSError as e:
-                    result['error'] = f"Failed to create output directory '{output_dir}': {str(e)}"
-                    return result
-
         # Save document
-        try:
-            logging.debug(f"Attempting to save document to: {result['output_path']}")
-            document.save(result['output_path'])
-            result['success'] = True
-        except PermissionError as e:
-            result['error'] = f"Permission denied when saving file '{result['output_path']}': {str(e)}"
-            logging.error(result['error'])
-            return result
-        except OSError as e:
-            result['error'] = f"Error saving file '{result['output_path']}': {str(e)}"
-            logging.error(result['error'])
-            return result
+        output_dir = os.path.dirname(output_path)
+        if output_dir and not os.path.exists(output_dir):
+            os.makedirs(output_dir, exist_ok=True)
+        document.save(output_path)
+        result['success'] = True
 
     except Exception as e:
         result['error'] = f"Unexpected error processing document: {str(e)}"
-        logging.error(result['error'])
-        return result
 
     return result
